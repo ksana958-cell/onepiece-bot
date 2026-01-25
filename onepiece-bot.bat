@@ -2,7 +2,7 @@ import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
-TOKEN = os.getenv("8193007667:AAHI2W-A_X_jHFUUgrkVZKtV2AUNKgnlra4)
+TOKEN = os.getenv(8193007667:AAHI2W-A_X_jHFUUgrkVZKtV2AUNKgnlra4)
 if not TOKEN:
     raise RuntimeError("BOT_TOKEN is not set")
 
