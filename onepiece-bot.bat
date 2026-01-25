@@ -1,7 +1,13 @@
+import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
-TOKEN = "8193007667:AAHI2W-A_X_jHFUUgrkVZKtV2AUNKgnlra4"
+TOKEN = os.getenv("8193007667:AAHI2W-A_X_jHFUUgrkVZKtV2AUNKgnlra4)
+if not TOKEN:
+    raise RuntimeError("BOT_TOKEN is not set")
+
+VOICE = "Shachiburi, Animedia, Nazel"
+CHANNEL = "@AnimeHUB_Dream"
 
 DATA = {
     "east": {
@@ -142,85 +148,135 @@ ARC_DETAILS = {
     "a49": "Описание:\nНа Яичной Голове встреча с Вегапанком и столкновение с Правительством запускают события, меняющие структуру мира One Piece.",
 }
 
-VOICE = "Reanimedia"
-CHANNEL = "@AnimeHUB_Dream"
+ARC_LINKS = {
+    "a1": "https://t.me/c/3798271874/6",
+    "a2": "https://t.me/c/3798271874/12",
+    "a3": "https://t.me/c/3798271874/23",
+    "a4": "https://t.me/c/3798271874/36",
+    "a5": "https://t.me/c/3798271874/51",
+    "a6": "https://t.me/c/3798271874/54",
+    "a7": "https://t.me/c/3798271874/62",
+    "a8": "https://t.me/c/3798271874/72",
+    "a9": "https://t.me/c/3798271874/75",
+    "a10": "https://t.me/c/3798271874/80",
+    "a11": "https://t.me/c/3798271874/83",
+    "a12": "https://t.me/c/3798271874/92",
+    "a13": "https://t.me/c/3798271874/107",
+    "a14": "https://t.me/c/3798271874/147",
+    "a15": "https://t.me/c/3798271874/153",
+    "a16": "https://t.me/c/3798271874/157",
+    "a17": "https://t.me/c/3798271874/163",
+    "a18": "https://t.me/c/3798271874/173",
+    "a19": "https://t.me/c/3798271874/217",
+    "a20": "https://t.me/c/3798271874/229",
+    "a21": "https://t.me/c/3798271874/243",
+    "a22": "https://t.me/c/3798271874/249",
+    "a23": "https://t.me/c/3798271874/254",
+    "a24": "https://t.me/c/3798271874/290",
+    "a25": "https://t.me/c/3798271874/340",
+    "a26": "https://t.me/c/3798271874/354",
+    "a27": "https://t.me/c/3798271874/366",
+    "a28": "https://t.me/c/3798271874/412",
+    "a29": "https://t.me/c/3798271874/416",
+    "a30": "https://t.me/c/3798271874/440",
+    "a31": "https://t.me/c/3798271874/455",
+    "a32": "https://t.me/c/3798271874/460",
+    "a33": "https://t.me/c/3798271874/465",
+    "a34": "https://t.me/c/3798271874/493",
+    "a35": "https://t.me/c/3798271874/527",
+    "a36": "https://t.me/c/3798271874/555",
+    "a37": "https://t.me/c/3798271874/566",
+    "a38": "https://t.me/c/3798271874/615",
+    "a39": "https://t.me/c/3798271874/620",
+    "a40": "https://t.me/c/3798271874/668",
+    "a41": "https://t.me/c/3798271874/672",
+    "a42": "https://t.me/c/3798271874/791",
+    "a43": "https://t.me/c/3798271874/796",
+    "a44": "https://t.me/c/3798271874/826",
+    "a45": "https://t.me/c/3798271874/830",
+    "a46": "https://t.me/c/3798271874/926",
+    "a47": "https://t.me/c/3798271874/939",
+    "a48": "https://t.me/c/3798271874/1136",
+    "a49": "https://t.me/c/3798271874/1207",
+}
 
 
 def main_menu_keyboard():
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🌊 Ист Блю", callback_data="saga:east"),
-         InlineKeyboardButton("🏜 Алабаста", callback_data="saga:alabasta")],
-        [InlineKeyboardButton("☁️ Скайпия", callback_data="saga:skypiea"),
-         InlineKeyboardButton("🚆 Water 7", callback_data="saga:water7")],
-        [InlineKeyboardButton("🎃 Триллер Барк", callback_data="saga:thriller"),
-         InlineKeyboardButton("⚔️ Война", callback_data="saga:war")],
-        [InlineKeyboardButton("🌍 Новый Свет", callback_data="saga:newworld")],
-    ])
+    return InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("🌊 Ист Блю", callback_data="saga:east"),
+                InlineKeyboardButton("🏜 Алабаста", callback_data="saga:alabasta"),
+            ],
+            [
+                InlineKeyboardButton("☁️ Скайпия", callback_data="saga:skypiea"),
+                InlineKeyboardButton("🚆 Water 7", callback_data="saga:water7"),
+            ],
+            [
+                InlineKeyboardButton("🎃 Триллер Барк", callback_data="saga:thriller"),
+                InlineKeyboardButton("⚔️ Война", callback_data="saga:war"),
+            ],
+            [InlineKeyboardButton("🌍 Новый Свет", callback_data="saga:newworld")],
+        ]
+    )
 
 
 def saga_keyboard(saga_key: str):
     arcs = DATA[saga_key]["arcs"]
-    rows = []
-    for arc in arcs:
-        rows.append([InlineKeyboardButton(f"▫️ {arc['name']} ({arc['eps']})", callback_data=f"arc:{saga_key}:{arc['id']}")])
-
+    rows = [[InlineKeyboardButton(f"▫️ {arc['name']} ({arc['eps']})", callback_data=f"arc:{saga_key}:{arc['id']}")] for arc in arcs]
     rows.append([InlineKeyboardButton("⬅️ Назад", callback_data="back:main")])
     return InlineKeyboardMarkup(rows)
 
 
-def arc_keyboard(saga_key: str):
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("⬅️ Назад к саге", callback_data=f"back:saga:{saga_key}")],
-        [InlineKeyboardButton("🏠 Главное меню", callback_data="back:main")],
-    ])
+def arc_keyboard(saga_key: str, arc_id: str):
+    buttons = []
+    link = ARC_LINKS.get(arc_id)
+    if link:
+        buttons.append([InlineKeyboardButton("🔗 Открыть пост", url=link)])
+    buttons.append([InlineKeyboardButton("⬅️ Назад к саге", callback_data=f"back:saga:{saga_key}")])
+    buttons.append([InlineKeyboardButton("🏠 Главное меню", callback_data="back:main")])
+    return InlineKeyboardMarkup(buttons)
 
 
 def arc_header(arc_name: str, eps: str):
-    return (
-        f"🏴‍☠️ Ван Пис\n"
-        f"—\n"
-        f"📌 {arc_name}\n"
-        f"🎬 Эпизоды: {eps}\n"
-        f"\n"
-    )
+    return f"🏴‍☠️ Ван Пис\n—\n📌 {arc_name}\n🎬 Эпизоды: {eps}\n\n"
 
 
 async def onepiece(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:",
-        reply_markup=main_menu_keyboard()
-    )
+    await update.message.reply_text("🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:", reply_markup=main_menu_keyboard())
 
 
 async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-
     data = query.data
 
     if data.startswith("saga:"):
         saga_key = data.split(":", 1)[1]
         title = DATA[saga_key]["title"]
-        text = f"{title}\n\nВыберите арку:"
-        await query.edit_message_text(text, reply_markup=saga_keyboard(saga_key))
+        await query.edit_message_text(f"{title}\n\nВыберите арку:", reply_markup=saga_keyboard(saga_key))
         return
 
     if data.startswith("arc:"):
         _, saga_key, arc_id = data.split(":", 2)
-        saga = DATA[saga_key]
+        saga = DATA.get(saga_key)
+        if not saga:
+            await query.edit_message_text("Сага не найдена.", reply_markup=main_menu_keyboard())
+            return
+
         arc = next((x for x in saga["arcs"] if x["id"] == arc_id), None)
         if not arc:
-            await query.edit_message_text("Арка не найдена.", reply_markup=arc_keyboard(saga_key))
+            await query.edit_message_text("Арка не найдена.", reply_markup=saga_keyboard(saga_key))
             return
 
         desc = ARC_DETAILS.get(arc_id, "Описание:\n—")
         text = (
-            arc_header(arc["name"], arc["eps"]) +
-            f"{desc}\n\n"
-            f"🎙 Озвучка: {VOICE}\n"
-            f"📣 Канал: {CHANNEL}"
+            arc_header(arc["name"], arc["eps"])
+            + f"{desc}\n\n"
+            + f"🎙 Озвучка: {VOICE}\n"
+            + f"📣 Канал: {CHANNEL}"
         )
-        await query.edit_message_text(text, reply_markup=arc_keyboard(saga_key))
+        await query.edit_message_text(text, reply_markup=arc_keyboard(saga_key, arc_id))
         return
 
     if data == "back:main":
@@ -229,7 +285,7 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data.startswith("back:saga:"):
         saga_key = data.split(":", 2)[2]
-        title = DATA[saga_key]["title"]
+        title = DATA.get(saga_key, {}).get("title", "Сага")
         await query.edit_message_text(f"{title}\n\nВыберите арку:", reply_markup=saga_keyboard(saga_key))
         return
 
