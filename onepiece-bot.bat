@@ -1,10 +1,30 @@
 import os
+import json
+from pathlib import Path
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
     raise RuntimeError("BOT_TOKEN is not set")
+
+STATE_FILE = Path("state.json")
+
+
+def load_state():
+    if STATE_FILE.exists():
+        try:
+            return json.loads(STATE_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def save_state(state: dict):
+    STATE_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+STATE = load_state()
 
 DATA = {
     "east": {
@@ -182,33 +202,24 @@ def saga_keyboard(saga_key: str):
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
-        await update.message.reply_text(
-            "🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:",
-            reply_markup=main_menu_keyboard(),
-        )
+        await update.message.reply_text("🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:", reply_markup=main_menu_keyboard())
     else:
         q = update.callback_query
-        await q.edit_message_text(
-            "🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:",
-            reply_markup=main_menu_keyboard(),
-        )
+        await q.edit_message_text("🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:", reply_markup=main_menu_keyboard())
 
 
 async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    data = query.data
 
+    data = query.data
     if data == "noop":
         return
 
     if data.startswith("saga:"):
         saga_key = data.split(":", 1)[1]
         title = DATA[saga_key]["title"]
-        await query.edit_message_text(
-            f"{title}\n\nВыберите арку:",
-            reply_markup=saga_keyboard(saga_key),
-        )
+        await query.edit_message_text(f"{title}\n\nВыберите арку:", reply_markup=saga_keyboard(saga_key))
         return
 
     if data == "back:main":
@@ -216,10 +227,79 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
 
+async def set_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message:
+        return
+
+    if not update.message.reply_to_message:
+        await update.message.reply_text(
+            "Сделай так:\n"
+            "1) Перешли мне ЛЮБОЕ сообщение из канала\n"
+            "2) Ответь на него командой /set_channel"
+        )
+        return
+
+    fwd = update.message.reply_to_message.forward_from_chat
+    if not fwd:
+        await update.message.reply_text(
+            "Я не вижу канал в пересланном сообщении.\n"
+            "Перешли сообщение из КАНАЛА (не из чата) и снова ответь на него /set_channel."
+        )
+        return
+
+    STATE["channel_id"] = fwd.id
+    save_state(STATE)
+    await update.message.reply_text(f"Готово! Канал привязан.\nchannel_id: {fwd.id}")
+
+
+async def post_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    channel_id = STATE.get("channel_id")
+    if not channel_id:
+        await update.message.reply_text(
+            "Сначала привяжи канал:\n"
+            "1) Перешли мне любое сообщение из канала\n"
+            "2) Ответь на него /set_channel"
+        )
+        return
+
+    sent = await context.bot.send_message(
+        chat_id=channel_id,
+        text="🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:",
+        reply_markup=main_menu_keyboard(),
+    )
+
+    STATE["last_nav_message_id"] = sent.message_id
+    save_state(STATE)
+
+    await update.message.reply_text("Навигация отправлена в канал ✅")
+
+
+async def pin_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    channel_id = STATE.get("channel_id")
+    msg_id = STATE.get("last_nav_message_id")
+
+    if not channel_id or not msg_id:
+        await update.message.reply_text("Сначала сделай /post_nav (чтобы я знал, какое сообщение закреплять).")
+        return
+
+    try:
+        await context.bot.pin_chat_message(chat_id=channel_id, message_id=msg_id, disable_notification=True)
+        await update.message.reply_text("Закрепил навигацию ✅")
+    except Exception as e:
+        await update.message.reply_text(
+            "Не смог закрепить.\n"
+            "Проверь, что бот админ в канале и у него есть право «Закреплять сообщения».\n"
+            f"Ошибка: {e}"
+        )
+
+
 def run():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", menu))
     app.add_handler(CommandHandler("onepiece", menu))
+    app.add_handler(CommandHandler("set_channel", set_channel))
+    app.add_handler(CommandHandler("post_nav", post_nav))
+    app.add_handler(CommandHandler("pin_nav", pin_nav))
     app.add_handler(CallbackQueryHandler(on_button))
     app.run_polling()
 
