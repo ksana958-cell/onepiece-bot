@@ -292,8 +292,11 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def run():
     app = Application.builder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", onepiece))
     app.add_handler(CommandHandler("onepiece", onepiece))
     app.add_handler(CallbackQueryHandler(on_button))
+
     app.run_polling()
 
 
