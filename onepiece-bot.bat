@@ -1,10 +1,30 @@
 import os
+import json
+from pathlib import Path
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
     raise RuntimeError("BOT_TOKEN is not set")
+
+STATE_FILE = Path("state.json")
+
+
+def load_state():
+    if STATE_FILE.exists():
+        try:
+            return json.loads(STATE_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def save_state(state: dict):
+    STATE_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+STATE = load_state()
 
 DATA = {
     "s1_east": {
@@ -160,19 +180,6 @@ ARC_LINKS = {
     "a49": "https://t.me/c/3798271874/1207",
 }
 
-SAGA_ORDER = [
-    "s1_east",
-    "s2_alabasta",
-    "s3_skypiea",
-    "s4_water7",
-    "s5_thriller",
-    "s6_war",
-    "s7_fishman",
-    "s8_dressrosa",
-    "s9_yonko",
-    "s10_final",
-]
-
 
 def main_menu_keyboard():
     return InlineKeyboardMarkup(
@@ -227,8 +234,8 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-
     data = query.data
+
     if data == "noop":
         return
 
@@ -246,10 +253,75 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
 
+async def set_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message:
+        return
+
+    if update.effective_chat and update.effective_chat.type in ("channel", "supergroup", "group"):
+        chat_id = update.effective_chat.id
+        STATE["channel_id"] = chat_id
+        save_state(STATE)
+        await update.message.reply_text(f"Готово! Привязал чат: {chat_id}")
+        return
+
+    if update.message.reply_to_message and update.message.reply_to_message.forward_from_chat:
+        fwd_chat = update.message.reply_to_message.forward_from_chat
+        STATE["channel_id"] = fwd_chat.id
+        save_state(STATE)
+        await update.message.reply_text(f"Готово! Канал привязан.\nchannel_id: {fwd_chat.id}")
+        return
+
+    await update.message.reply_text(
+        "Не вижу канал.\n\n"
+        "Вариант A (надёжный): добавь бота админом в канал и напиши в канале /set_channel\n"
+        "Вариант B: перешли мне сообщение из канала и ответь на него /set_channel"
+    )
+
+
+async def post_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    channel_id = STATE.get("channel_id")
+    if not channel_id:
+        await update.message.reply_text("Сначала привяжи канал командой /set_channel.")
+        return
+
+    sent = await context.bot.send_message(
+        chat_id=channel_id,
+        text="🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:",
+        reply_markup=main_menu_keyboard(),
+    )
+
+    STATE["last_nav_message_id"] = sent.message_id
+    save_state(STATE)
+
+    await update.message.reply_text("Навигация отправлена в канал ✅")
+
+
+async def pin_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    channel_id = STATE.get("channel_id")
+    msg_id = STATE.get("last_nav_message_id")
+
+    if not channel_id or not msg_id:
+        await update.message.reply_text("Сначала сделай /post_nav, чтобы было что закреплять.")
+        return
+
+    try:
+        await context.bot.pin_chat_message(chat_id=channel_id, message_id=msg_id, disable_notification=True)
+        await update.message.reply_text("Закрепил навигацию ✅")
+    except Exception as e:
+        await update.message.reply_text(
+            "Не смог закрепить.\n"
+            "Проверь права бота в канале: «Публиковать» и «Закреплять».\n"
+            f"Ошибка: {e}"
+        )
+
+
 def run():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", menu))
     app.add_handler(CommandHandler("onepiece", menu))
+    app.add_handler(CommandHandler("set_channel", set_channel))
+    app.add_handler(CommandHandler("post_nav", post_nav))
+    app.add_handler(CommandHandler("pin_nav", pin_nav))
     app.add_handler(CallbackQueryHandler(on_button))
     app.run_polling()
 
