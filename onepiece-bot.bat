@@ -1,6 +1,4 @@
 import os
-import json
-from pathlib import Path
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
@@ -8,27 +6,9 @@ TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
     raise RuntimeError("BOT_TOKEN is not set")
 
-STATE_FILE = Path("state.json")
-
-
-def load_state():
-    if STATE_FILE.exists():
-        try:
-            return json.loads(STATE_FILE.read_text(encoding="utf-8"))
-        except Exception:
-            return {}
-    return {}
-
-
-def save_state(state: dict):
-    STATE_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
-
-
-STATE = load_state()
-
 DATA = {
-    "east": {
-        "title": "🌊 Ист Блю",
+    "s1_east": {
+        "title": "🟦 Сага 1 — Восточное море",
         "arcs": [
             {"id": "a1", "name": "На заре приключений", "eps": "1–3"},
             {"id": "a2", "name": "Оранж-Таун", "eps": "4–8"},
@@ -40,8 +20,8 @@ DATA = {
             {"id": "a8", "name": "Апис (филлер)", "eps": "54–61"},
         ],
     },
-    "alabasta": {
-        "title": "🏜 Алабаста-сага",
+    "s2_alabasta": {
+        "title": "🟨 Сага 2 — Алабаста",
         "arcs": [
             {"id": "a9", "name": "Реверс-Маунтин", "eps": "62–63"},
             {"id": "a10", "name": "Виски-Пик", "eps": "64–67"},
@@ -52,8 +32,8 @@ DATA = {
             {"id": "a15", "name": "После Алабасты", "eps": "131–135"},
         ],
     },
-    "skypiea": {
-        "title": "☁️ Скайпия-сага",
+    "s3_skypiea": {
+        "title": "🟦 Сага 3 — Скайпия",
         "arcs": [
             {"id": "a16", "name": "Козий остров (филлер)", "eps": "136–138"},
             {"id": "a17", "name": "Остров Рулука (филлер)", "eps": "139–143"},
@@ -62,8 +42,8 @@ DATA = {
             {"id": "a20", "name": "G-8 (филлер)", "eps": "196–206"},
         ],
     },
-    "water7": {
-        "title": "🚆 Water 7-сага",
+    "s4_water7": {
+        "title": "🟩 Сага 4 — Water 7",
         "arcs": [
             {"id": "a21", "name": "Длинно-круглая земля", "eps": "207–219"},
             {"id": "a22", "name": "Океанский сон (филлер)", "eps": "220–224"},
@@ -73,16 +53,16 @@ DATA = {
             {"id": "a26", "name": "После Эниес-Лобби", "eps": "313–325"},
         ],
     },
-    "thriller": {
-        "title": "🎃 Триллер Барк-сага",
+    "s5_thriller": {
+        "title": "🟪 Сага 5 — Триллер Барк",
         "arcs": [
             {"id": "a27", "name": "Ледяной охотник (филлер)", "eps": "326–336"},
             {"id": "a28", "name": "Триллер-Барк", "eps": "337–381"},
             {"id": "a29", "name": "Остров-спа (филлер)", "eps": "382–384"},
         ],
     },
-    "war": {
-        "title": "⚔️ Сага Войны",
+    "s6_war": {
+        "title": "🟥 Сага 6 — Война за вершину",
         "arcs": [
             {"id": "a30", "name": "Архипелаг Сабаоди", "eps": "385–407"},
             {"id": "a31", "name": "Амазон Лили", "eps": "408–422"},
@@ -93,21 +73,36 @@ DATA = {
             {"id": "a36", "name": "После Войны", "eps": "490–516"},
         ],
     },
-    "newworld": {
-        "title": "🌍 Новый Свет",
+    "s7_fishman": {
+        "title": "🌊 Сага 7 — Рыболюдский остров",
         "arcs": [
             {"id": "a37", "name": "Возвращение на Сабаоди", "eps": "517–526"},
             {"id": "a38", "name": "Остров Рыболюдей", "eps": "527–574"},
+        ],
+    },
+    "s8_dressrosa": {
+        "title": "🎭 Сага 8 — Дресс Роза",
+        "arcs": [
             {"id": "a39", "name": "Амбиции Z (филлер)", "eps": "575–578"},
             {"id": "a40", "name": "Панк Хазард", "eps": "579–625"},
             {"id": "a41", "name": "Возвращение Цезаря (филлер)", "eps": "626–628"},
             {"id": "a42", "name": "Дресс Роза", "eps": "629–746"},
             {"id": "a43", "name": "Серебряный рудник (филлер)", "eps": "747–750"},
+        ],
+    },
+    "s9_yonko": {
+        "title": "👑 Сага 9 — Йонко",
+        "arcs": [
             {"id": "a44", "name": "Зоу", "eps": "751–779"},
             {"id": "a45", "name": "Дозорные-сверхновые", "eps": "780–782"},
             {"id": "a46", "name": "Пирожный остров", "eps": "783–877"},
             {"id": "a47", "name": "Совет Королей (Ревери)", "eps": "878–889"},
             {"id": "a48", "name": "Страна Вано", "eps": "890–1085"},
+        ],
+    },
+    "s10_final": {
+        "title": "🌑 Сага 10 — Финальная",
+        "arcs": [
             {"id": "a49", "name": "Яичная Голова", "eps": "1086–1155"},
         ],
     },
@@ -165,23 +160,43 @@ ARC_LINKS = {
     "a49": "https://t.me/c/3798271874/1207",
 }
 
+SAGA_ORDER = [
+    "s1_east",
+    "s2_alabasta",
+    "s3_skypiea",
+    "s4_water7",
+    "s5_thriller",
+    "s6_war",
+    "s7_fishman",
+    "s8_dressrosa",
+    "s9_yonko",
+    "s10_final",
+]
+
 
 def main_menu_keyboard():
     return InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton("🌊 Ист Блю", callback_data="saga:east"),
-                InlineKeyboardButton("🏜 Алабаста", callback_data="saga:alabasta"),
+                InlineKeyboardButton("1️⃣ Восточное море", callback_data="saga:s1_east"),
+                InlineKeyboardButton("2️⃣ Алабаста", callback_data="saga:s2_alabasta"),
             ],
             [
-                InlineKeyboardButton("☁️ Скайпия", callback_data="saga:skypiea"),
-                InlineKeyboardButton("🚆 Water 7", callback_data="saga:water7"),
+                InlineKeyboardButton("3️⃣ Скайпия", callback_data="saga:s3_skypiea"),
+                InlineKeyboardButton("4️⃣ Water 7", callback_data="saga:s4_water7"),
             ],
             [
-                InlineKeyboardButton("🎃 Триллер Барк", callback_data="saga:thriller"),
-                InlineKeyboardButton("⚔️ Война", callback_data="saga:war"),
+                InlineKeyboardButton("5️⃣ Триллер Барк", callback_data="saga:s5_thriller"),
+                InlineKeyboardButton("6️⃣ Война", callback_data="saga:s6_war"),
             ],
-            [InlineKeyboardButton("🌍 Новый Свет", callback_data="saga:newworld")],
+            [
+                InlineKeyboardButton("7️⃣ Рыболюди", callback_data="saga:s7_fishman"),
+                InlineKeyboardButton("8️⃣ Дресс Роза", callback_data="saga:s8_dressrosa"),
+            ],
+            [
+                InlineKeyboardButton("9️⃣ Йонко", callback_data="saga:s9_yonko"),
+                InlineKeyboardButton("🔟 Финальная", callback_data="saga:s10_final"),
+            ],
         ]
     )
 
@@ -201,11 +216,12 @@ def saga_keyboard(saga_key: str):
 
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = "🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:"
     if update.message:
-        await update.message.reply_text("🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:", reply_markup=main_menu_keyboard())
+        await update.message.reply_text(text, reply_markup=main_menu_keyboard())
     else:
         q = update.callback_query
-        await q.edit_message_text("🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:", reply_markup=main_menu_keyboard())
+        await q.edit_message_text(text, reply_markup=main_menu_keyboard())
 
 
 async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -218,6 +234,9 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data.startswith("saga:"):
         saga_key = data.split(":", 1)[1]
+        if saga_key not in DATA:
+            await query.edit_message_text("Сага не найдена.", reply_markup=main_menu_keyboard())
+            return
         title = DATA[saga_key]["title"]
         await query.edit_message_text(f"{title}\n\nВыберите арку:", reply_markup=saga_keyboard(saga_key))
         return
@@ -227,79 +246,10 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
 
-async def set_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message:
-        return
-
-    if not update.message.reply_to_message:
-        await update.message.reply_text(
-            "Сделай так:\n"
-            "1) Перешли мне ЛЮБОЕ сообщение из канала\n"
-            "2) Ответь на него командой /set_channel"
-        )
-        return
-
-    fwd = update.message.reply_to_message.forward_from_chat
-    if not fwd:
-        await update.message.reply_text(
-            "Я не вижу канал в пересланном сообщении.\n"
-            "Перешли сообщение из КАНАЛА (не из чата) и снова ответь на него /set_channel."
-        )
-        return
-
-    STATE["channel_id"] = fwd.id
-    save_state(STATE)
-    await update.message.reply_text(f"Готово! Канал привязан.\nchannel_id: {fwd.id}")
-
-
-async def post_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    channel_id = STATE.get("channel_id")
-    if not channel_id:
-        await update.message.reply_text(
-            "Сначала привяжи канал:\n"
-            "1) Перешли мне любое сообщение из канала\n"
-            "2) Ответь на него /set_channel"
-        )
-        return
-
-    sent = await context.bot.send_message(
-        chat_id=channel_id,
-        text="🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:",
-        reply_markup=main_menu_keyboard(),
-    )
-
-    STATE["last_nav_message_id"] = sent.message_id
-    save_state(STATE)
-
-    await update.message.reply_text("Навигация отправлена в канал ✅")
-
-
-async def pin_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    channel_id = STATE.get("channel_id")
-    msg_id = STATE.get("last_nav_message_id")
-
-    if not channel_id or not msg_id:
-        await update.message.reply_text("Сначала сделай /post_nav (чтобы я знал, какое сообщение закреплять).")
-        return
-
-    try:
-        await context.bot.pin_chat_message(chat_id=channel_id, message_id=msg_id, disable_notification=True)
-        await update.message.reply_text("Закрепил навигацию ✅")
-    except Exception as e:
-        await update.message.reply_text(
-            "Не смог закрепить.\n"
-            "Проверь, что бот админ в канале и у него есть право «Закреплять сообщения».\n"
-            f"Ошибка: {e}"
-        )
-
-
 def run():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", menu))
     app.add_handler(CommandHandler("onepiece", menu))
-    app.add_handler(CommandHandler("set_channel", set_channel))
-    app.add_handler(CommandHandler("post_nav", post_nav))
-    app.add_handler(CommandHandler("pin_nav", pin_nav))
     app.add_handler(CallbackQueryHandler(on_button))
     app.run_polling()
 
