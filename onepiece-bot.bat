@@ -114,7 +114,7 @@ def saga_keyboard(saga_key: str):
         if link:
             rows.append([InlineKeyboardButton(title, url=link)])
         else:
-            rows.append([InlineKeyboardButton(f"{title} (нет ссылки)", callback_data="noop")])
+            rows.append([InlineKeyboardButton(title, callback_data="noop")])
     rows.append([InlineKeyboardButton("⬅️ Назад", callback_data="back:main")])
     return InlineKeyboardMarkup(rows)
 
@@ -124,8 +124,7 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(text, reply_markup=main_menu_keyboard())
     else:
-        q = update.callback_query
-        await q.edit_message_text(text, reply_markup=main_menu_keyboard())
+        await update.callback_query.edit_message_text(text, reply_markup=main_menu_keyboard())
 
 
 async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -133,24 +132,57 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     data = query.data
 
-    if data == "noop":
-        return
-
     if data.startswith("saga:"):
-        saga_key = data.split(":", 1)[1]
-        title = DATA[saga_key]["title"]
-        await query.edit_message_text(f"{title}\n\nВыберите арку:", reply_markup=saga_keyboard(saga_key))
+        saga_key = data.split(":")[1]
+        await query.edit_message_text(
+            f"{DATA[saga_key]['title']}\n\nВыберите арку:",
+            reply_markup=saga_keyboard(saga_key),
+        )
+
+    elif data == "back:main":
+        await menu(update, context)
+
+
+async def set_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.effective_chat.id
+    STATE["channel_id"] = chat_id
+    save_state(STATE)
+    await update.message.reply_text(f"Канал привязан: {chat_id}")
+
+
+async def post_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    channel_id = STATE.get("channel_id")
+    if not channel_id:
+        await update.message.reply_text("Сначала /set_channel")
         return
 
-    if data == "back:main":
-        await menu(update, context)
-        return
+    sent = await context.bot.send_message(
+        chat_id=channel_id,
+        text="🍥 НАРУТО — НАВИГАЦИЯ\nВыберите раздел:",
+        reply_markup=main_menu_keyboard(),
+    )
+
+    STATE["last_nav_message_id"] = sent.message_id
+    save_state(STATE)
+
+    await update.message.reply_text("Отправлено ✅")
+
+
+async def pin_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.pin_chat_message(
+        chat_id=STATE["channel_id"],
+        message_id=STATE["last_nav_message_id"],
+    )
+    await update.message.reply_text("Закреплено ✅")
 
 
 def run():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", menu))
     app.add_handler(CommandHandler("naruto", menu))
+    app.add_handler(CommandHandler("set_channel", set_channel))
+    app.add_handler(CommandHandler("post_nav", post_nav))
+    app.add_handler(CommandHandler("pin_nav", pin_nav))
     app.add_handler(CallbackQueryHandler(on_button))
     app.run_polling()
 
