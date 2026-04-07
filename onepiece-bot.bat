@@ -27,183 +27,80 @@ def save_state(state: dict):
 STATE = load_state()
 
 DATA = {
-    "s1_east": {
-        "title": "🟦 Сага 1 — Восточное море",
+    "naruto_classic": {
+        "title": "🍥 Наруто (Оригинал)",
         "arcs": [
-            {"id": "a1", "name": "На заре приключений", "eps": "1–3"},
-            {"id": "a2", "name": "Оранж-Таун", "eps": "4–8"},
-            {"id": "a3", "name": "Деревня Усоппа", "eps": "9–18"},
-            {"id": "a4", "name": "Ресторан «Барати»", "eps": "19–30"},
-            {"id": "a5", "name": "Арлонг-Парк", "eps": "31–45"},
-            {"id": "a6", "name": "История Багги", "eps": "46–47"},
-            {"id": "a7", "name": "Логтаун", "eps": "48–53"},
-            {"id": "a8", "name": "Апис (филлер)", "eps": "54–61"},
+            {"id": "n1", "name": "Введение", "eps": "1–5"},
+            {"id": "n2", "name": "Страна Волн", "eps": "6–19"},
+            {"id": "n3", "name": "Экзамен на чунина", "eps": "20–67"},
+            {"id": "n4", "name": "Вторжение в Коноху", "eps": "68–80"},
+            {"id": "n5", "name": "Возвращение Итачи", "eps": "81–85"},
+            {"id": "n6", "name": "Поиск Цунаде", "eps": "86–100"},
+            {"id": "n7", "name": "Преследование Саске", "eps": "107–135"},
         ],
     },
-    "s2_alabasta": {
-        "title": "🟨 Сага 2 — Алабаста",
+    "naruto_shippuden": {
+        "title": "🔥 Наруто Шиппуден",
         "arcs": [
-            {"id": "a9", "name": "Реверс-Маунтин", "eps": "62–63"},
-            {"id": "a10", "name": "Виски-Пик", "eps": "64–67"},
-            {"id": "a11", "name": "История Коби и Хельмеппо", "eps": "68–69"},
-            {"id": "a12", "name": "Литл-Гарден", "eps": "70–77"},
-            {"id": "a13", "name": "Остров Драм", "eps": "78–91"},
-            {"id": "a14", "name": "Алабаста", "eps": "92–130"},
-            {"id": "a15", "name": "После Алабасты", "eps": "131–135"},
-        ],
-    },
-    "s3_skypiea": {
-        "title": "🟦 Сага 3 — Скайпия",
-        "arcs": [
-            {"id": "a16", "name": "Козий остров (филлер)", "eps": "136–138"},
-            {"id": "a17", "name": "Остров Рулука (филлер)", "eps": "139–143"},
-            {"id": "a18", "name": "Джая", "eps": "144–152"},
-            {"id": "a19", "name": "Скайпия", "eps": "153–195"},
-            {"id": "a20", "name": "G-8 (филлер)", "eps": "196–206"},
-        ],
-    },
-    "s4_water7": {
-        "title": "🟩 Сага 4 — Water 7",
-        "arcs": [
-            {"id": "a21", "name": "Длинно-круглая земля", "eps": "207–219"},
-            {"id": "a22", "name": "Океанский сон (филлер)", "eps": "220–224"},
-            {"id": "a23", "name": "Возвращение Фокси (филлер)", "eps": "225–228"},
-            {"id": "a24", "name": "Water 7", "eps": "227–263"},
-            {"id": "a25", "name": "Эниес-Лобби", "eps": "264–312"},
-            {"id": "a26", "name": "После Эниес-Лобби", "eps": "313–325"},
-        ],
-    },
-    "s5_thriller": {
-        "title": "🟪 Сага 5 — Триллер Барк",
-        "arcs": [
-            {"id": "a27", "name": "Ледяной охотник (филлер)", "eps": "326–336"},
-            {"id": "a28", "name": "Триллер-Барк", "eps": "337–381"},
-            {"id": "a29", "name": "Остров-спа (филлер)", "eps": "382–384"},
-        ],
-    },
-    "s6_war": {
-        "title": "🟥 Сага 6 — Война за вершину",
-        "arcs": [
-            {"id": "a30", "name": "Архипелаг Сабаоди", "eps": "385–407"},
-            {"id": "a31", "name": "Амазон Лили", "eps": "408–422"},
-            {"id": "a32", "name": "Импел-Даун, часть 1", "eps": "422–425"},
-            {"id": "a33", "name": "Литл Ист Блю (филлер)", "eps": "426–429"},
-            {"id": "a34", "name": "Импел-Даун, часть 2", "eps": "430–456"},
-            {"id": "a35", "name": "Маринфорд", "eps": "457–489"},
-            {"id": "a36", "name": "После Войны", "eps": "490–516"},
-        ],
-    },
-    "s7_fishman": {
-        "title": "🌊 Сага 7 — Рыболюдский остров",
-        "arcs": [
-            {"id": "a37", "name": "Возвращение на Сабаоди", "eps": "517–526"},
-            {"id": "a38", "name": "Остров Рыболюдей", "eps": "527–574"},
-        ],
-    },
-    "s8_dressrosa": {
-        "title": "🎭 Сага 8 — Дресс Роза",
-        "arcs": [
-            {"id": "a39", "name": "Амбиции Z (филлер)", "eps": "575–578"},
-            {"id": "a40", "name": "Панк Хазард", "eps": "579–625"},
-            {"id": "a41", "name": "Возвращение Цезаря (филлер)", "eps": "626–628"},
-            {"id": "a42", "name": "Дресс Роза", "eps": "629–746"},
-            {"id": "a43", "name": "Серебряный рудник (филлер)", "eps": "747–750"},
-        ],
-    },
-    "s9_yonko": {
-        "title": "👑 Сага 9 — Йонко",
-        "arcs": [
-            {"id": "a44", "name": "Зоу", "eps": "751–779"},
-            {"id": "a45", "name": "Дозорные-сверхновые", "eps": "780–782"},
-            {"id": "a46", "name": "Пирожный остров", "eps": "783–877"},
-            {"id": "a47", "name": "Совет Королей (Ревери)", "eps": "878–889"},
-            {"id": "a48", "name": "Страна Вано", "eps": "890–1085"},
-        ],
-    },
-    "s10_final": {
-        "title": "🌑 Сага 10 — Финальная",
-        "arcs": [
-            {"id": "a49", "name": "Яичная Голова", "eps": "1086–1155"},
+            {"id": "s1", "name": "Спасение Казекаге", "eps": "1–32"},
+            {"id": "s2", "name": "Долгожданная встреча", "eps": "33–56"},
+            {"id": "s3", "name": "Хидан и Какузу", "eps": "72–90"},
+            {"id": "s4", "name": "Предсказание учителя", "eps": "113–143"},
+            {"id": "s5", "name": "Два спасителя", "eps": "152–175"},
+            {"id": "s6", "name": "Совет Пяти Каге", "eps": "197–222"},
+            {"id": "s7", "name": "Приручение Девятихвостого", "eps": "243–260"},
+            {"id": "s8", "name": "Четвёртая Мировая Война (1 ч.)", "eps": "261–278, 282–283"},
+            {"id": "s9", "name": "Четвёртая Мировая Война (2 ч.)", "eps": "296–302, 321–348"},
+            {"id": "s10", "name": "Ниндзя во тьме", "eps": "349–361"},
+            {"id": "s11", "name": "Четвёртая Мировая Война (3 ч.)", "eps": "362–388, 391–393"},
+            {"id": "s12", "name": "Четвёртая Мировая Война (4 ч.)", "eps": "414–426"},
+            {"id": "s13", "name": "Хроники Джирайи", "eps": "432–450"},
+            {"id": "s14", "name": "История Итачи", "eps": "451–458"},
+            {"id": "s15", "name": "Четвёртая Мировая Война (5 ч.)", "eps": "459–479"},
+            {"id": "s16", "name": "Детство", "eps": "480–483"},
+            {"id": "s17", "name": "История Саске", "eps": "484–488"},
+            {"id": "s18", "name": "История Шикамару", "eps": "489–493"},
+            {"id": "s19", "name": "Свадьба Наруто", "eps": "494–500"},
         ],
     },
 }
 
 ARC_LINKS = {
-    "a1": "https://t.me/c/3798271874/6",
-    "a2": "https://t.me/c/3798271874/12",
-    "a3": "https://t.me/c/3798271874/23",
-    "a4": "https://t.me/c/3798271874/36",
-    "a5": "https://t.me/c/3798271874/51",
-    "a6": "https://t.me/c/3798271874/54",
-    "a7": "https://t.me/c/3798271874/62",
-    "a8": "https://t.me/c/3798271874/72",
-    "a9": "https://t.me/c/3798271874/75",
-    "a10": "https://t.me/c/3798271874/80",
-    "a11": "https://t.me/c/3798271874/83",
-    "a12": "https://t.me/c/3798271874/92",
-    "a13": "https://t.me/c/3798271874/107",
-    "a14": "https://t.me/c/3798271874/147",
-    "a15": "https://t.me/c/3798271874/153",
-    "a16": "https://t.me/c/3798271874/157",
-    "a17": "https://t.me/c/3798271874/163",
-    "a18": "https://t.me/c/3798271874/173",
-    "a19": "https://t.me/c/3798271874/217",
-    "a20": "https://t.me/c/3798271874/229",
-    "a21": "https://t.me/c/3798271874/243",
-    "a22": "https://t.me/c/3798271874/249",
-    "a23": "https://t.me/c/3798271874/254",
-    "a24": "https://t.me/c/3798271874/290",
-    "a25": "https://t.me/c/3798271874/340",
-    "a26": "https://t.me/c/3798271874/354",
-    "a27": "https://t.me/c/3798271874/366",
-    "a28": "https://t.me/c/3798271874/412",
-    "a29": "https://t.me/c/3798271874/416",
-    "a30": "https://t.me/c/3798271874/440",
-    "a31": "https://t.me/c/3798271874/455",
-    "a32": "https://t.me/c/3798271874/460",
-    "a33": "https://t.me/c/3798271874/465",
-    "a34": "https://t.me/c/3798271874/493",
-    "a35": "https://t.me/c/3798271874/527",
-    "a36": "https://t.me/c/3798271874/555",
-    "a37": "https://t.me/c/3798271874/566",
-    "a38": "https://t.me/c/3798271874/615",
-    "a39": "https://t.me/c/3798271874/620",
-    "a40": "https://t.me/c/3798271874/668",
-    "a41": "https://t.me/c/3798271874/672",
-    "a42": "https://t.me/c/3798271874/791",
-    "a43": "https://t.me/c/3798271874/796",
-    "a44": "https://t.me/c/3798271874/826",
-    "a45": "https://t.me/c/3798271874/830",
-    "a46": "https://t.me/c/3798271874/926",
-    "a47": "https://t.me/c/3798271874/939",
-    "a48": "https://t.me/c/3798271874/1136",
-    "a49": "https://t.me/c/3798271874/1207",
+    "n1": "https://t.me/c/3799653492/11",
+    "n2": "https://t.me/c/3799653492/26",
+    "n3": "https://t.me/c/3799653492/74",
+    "n4": "https://t.me/c/3799653492/88",
+    "n5": "https://t.me/c/3799653492/94",
+    "n6": "https://t.me/c/3799653492/108",
+    "n7": "https://t.me/c/3799653492/138",
+
+    "s1": "https://t.me/c/3799653492/172",
+    "s2": "https://t.me/c/3799653492/198",
+    "s3": "https://t.me/c/3799653492/218",
+    "s4": "https://t.me/c/3799653492/250",
+    "s5": "https://t.me/c/3799653492/288",
+    "s6": "https://t.me/c/3799653492/314",
+    "s7": "https://t.me/c/3799653492/333",
+    "s8": "https://t.me/c/3799653492/354",
+    "s9": "https://t.me/c/3799653492/390",
+    "s10": "https://t.me/c/3799653492/404",
+    "s11": "https://t.me/c/3799653492/437",
+    "s12": "https://t.me/c/3799653492/451",
+    "s13": "https://t.me/c/3799653492/471",
+    "s14": "https://t.me/c/3799653492/480",
+    "s15": "https://t.me/c/3799653492/502",
+    "s16": "https://t.me/c/3799653492/507",
+    "s17": "https://t.me/c/3799653492/513",
+    "s18": "https://t.me/c/3799653492/519",
+    "s19": "https://t.me/c/3799653492/527",
 }
 
 
 def main_menu_keyboard():
     return InlineKeyboardMarkup(
         [
-            [
-                InlineKeyboardButton("1️⃣ Восточное море", callback_data="saga:s1_east"),
-                InlineKeyboardButton("2️⃣ Алабаста", callback_data="saga:s2_alabasta"),
-            ],
-            [
-                InlineKeyboardButton("3️⃣ Скайпия", callback_data="saga:s3_skypiea"),
-                InlineKeyboardButton("4️⃣ Water 7", callback_data="saga:s4_water7"),
-            ],
-            [
-                InlineKeyboardButton("5️⃣ Триллер Барк", callback_data="saga:s5_thriller"),
-                InlineKeyboardButton("6️⃣ Война", callback_data="saga:s6_war"),
-            ],
-            [
-                InlineKeyboardButton("7️⃣ Рыболюди", callback_data="saga:s7_fishman"),
-                InlineKeyboardButton("8️⃣ Дресс Роза", callback_data="saga:s8_dressrosa"),
-            ],
-            [
-                InlineKeyboardButton("9️⃣ Йонко", callback_data="saga:s9_yonko"),
-                InlineKeyboardButton("🔟 Финальная", callback_data="saga:s10_final"),
-            ],
+            [InlineKeyboardButton("🍥 Наруто", callback_data="saga:naruto_classic")],
+            [InlineKeyboardButton("🔥 Шиппуден", callback_data="saga:naruto_shippuden")],
         ]
     )
 
@@ -223,7 +120,7 @@ def saga_keyboard(saga_key: str):
 
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = "🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:"
+    text = "🍥 НАРУТО — НАВИГАЦИЯ\nВыберите раздел:"
     if update.message:
         await update.message.reply_text(text, reply_markup=main_menu_keyboard())
     else:
@@ -241,9 +138,6 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data.startswith("saga:"):
         saga_key = data.split(":", 1)[1]
-        if saga_key not in DATA:
-            await query.edit_message_text("Сага не найдена.", reply_markup=main_menu_keyboard())
-            return
         title = DATA[saga_key]["title"]
         await query.edit_message_text(f"{title}\n\nВыберите арку:", reply_markup=saga_keyboard(saga_key))
         return
@@ -253,75 +147,10 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
 
-async def set_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message:
-        return
-
-    if update.effective_chat and update.effective_chat.type in ("channel", "supergroup", "group"):
-        chat_id = update.effective_chat.id
-        STATE["channel_id"] = chat_id
-        save_state(STATE)
-        await update.message.reply_text(f"Готово! Привязал чат: {chat_id}")
-        return
-
-    if update.message.reply_to_message and update.message.reply_to_message.forward_from_chat:
-        fwd_chat = update.message.reply_to_message.forward_from_chat
-        STATE["channel_id"] = fwd_chat.id
-        save_state(STATE)
-        await update.message.reply_text(f"Готово! Канал привязан.\nchannel_id: {fwd_chat.id}")
-        return
-
-    await update.message.reply_text(
-        "Не вижу канал.\n\n"
-        "Вариант A (надёжный): добавь бота админом в канал и напиши в канале /set_channel\n"
-        "Вариант B: перешли мне сообщение из канала и ответь на него /set_channel"
-    )
-
-
-async def post_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    channel_id = STATE.get("channel_id")
-    if not channel_id:
-        await update.message.reply_text("Сначала привяжи канал командой /set_channel.")
-        return
-
-    sent = await context.bot.send_message(
-        chat_id=channel_id,
-        text="🏴‍☠️ ВАН ПИС — НАВИГАЦИЯ\nВыберите сагу:",
-        reply_markup=main_menu_keyboard(),
-    )
-
-    STATE["last_nav_message_id"] = sent.message_id
-    save_state(STATE)
-
-    await update.message.reply_text("Навигация отправлена в канал ✅")
-
-
-async def pin_nav(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    channel_id = STATE.get("channel_id")
-    msg_id = STATE.get("last_nav_message_id")
-
-    if not channel_id or not msg_id:
-        await update.message.reply_text("Сначала сделай /post_nav, чтобы было что закреплять.")
-        return
-
-    try:
-        await context.bot.pin_chat_message(chat_id=channel_id, message_id=msg_id, disable_notification=True)
-        await update.message.reply_text("Закрепил навигацию ✅")
-    except Exception as e:
-        await update.message.reply_text(
-            "Не смог закрепить.\n"
-            "Проверь права бота в канале: «Публиковать» и «Закреплять».\n"
-            f"Ошибка: {e}"
-        )
-
-
 def run():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", menu))
-    app.add_handler(CommandHandler("onepiece", menu))
-    app.add_handler(CommandHandler("set_channel", set_channel))
-    app.add_handler(CommandHandler("post_nav", post_nav))
-    app.add_handler(CommandHandler("pin_nav", pin_nav))
+    app.add_handler(CommandHandler("naruto", menu))
     app.add_handler(CallbackQueryHandler(on_button))
     app.run_polling()
 
